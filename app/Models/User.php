@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use App\Enums\Permission as PermissionEnum;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -178,6 +179,11 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('role_permissions.role', $this->role->value)
             ->where('permissions.name', $permission->value)
             ->exists();
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
 }

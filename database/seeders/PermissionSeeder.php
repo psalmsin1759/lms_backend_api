@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Enums\Permission;
 use App\Enums\UserRole;
 use App\Models\Permission as PermissionModel;
@@ -22,9 +24,11 @@ class PermissionSeeder extends Seeder
 
             // PLATFORM
             UserRole::SUPER_ADMIN->value => Permission::cases(),
+
             UserRole::PLATFORM_SUPPORT->value => [
                 Permission::VIEW_ANALYTICS,
             ],
+
             UserRole::PLATFORM_FINANCE->value => [
                 Permission::MANAGE_BILLING,
             ],
@@ -66,13 +70,16 @@ class PermissionSeeder extends Seeder
 
         foreach ($map as $role => $permissions) {
             foreach ($permissions as $permission) {
-                DB::table('role_permissions')->insert([
-                    'role' => $role,
-                    'permission_id' => PermissionModel::where(
-                        'name',
-                        $permission->value
-                    )->value('id'),
-                ]);
+                DB::table('role_permissions')->updateOrInsert(
+                    [
+                        'role' => $role,
+                        'permission_id' => PermissionModel::where(
+                            'name',
+                            $permission->value
+                        )->value('id'),
+                    ],
+                    []
+                );
             }
         }
     }
