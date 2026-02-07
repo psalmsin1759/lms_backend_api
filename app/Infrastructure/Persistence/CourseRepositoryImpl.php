@@ -6,7 +6,6 @@ use App\Domain\Entities\Course;
 use App\Domain\Repositories\CourseRepositoryInterface;
 use App\Models\Course as CourseModel;
 use App\Enums\CourseStatus;
-use App\Enums\CourseLevel;
 use RuntimeException;
 
 class CourseRepositoryImpl implements CourseRepositoryInterface
@@ -58,32 +57,27 @@ class CourseRepositoryImpl implements CourseRepositoryInterface
 
     public function findById(int $id): ?Course
     {
-        $model = CourseModel::find($id);
+        $model = CourseModel::with('modules')->find($id);
         return $model ? $this->toEntity($model) : null;
     }
 
     public function findBySlug(string $slug): ?Course
     {
-        $model = CourseModel::where('slug', $slug)->first();
-        return $model ? $this->toEntity($model) : null;
-    }
-
-    public function findByTitle(string $title): ?Course
-    {
-        $model = CourseModel::where('title', $title)->first();
+        $model = CourseModel::with('modules')->where('slug', $slug)->first();
         return $model ? $this->toEntity($model) : null;
     }
 
     public function all(): array
     {
-        return CourseModel::all()
+        return CourseModel::with('modules')->get()
             ->map(fn ($model) => $this->toEntity($model))
             ->toArray();
     }
 
     public function getByInstructor(int $instructorId): array
     {
-        return CourseModel::where('instructor_id', $instructorId)
+        return CourseModel::with('modules')
+            ->where('instructor_id', $instructorId)
             ->get()
             ->map(fn ($model) => $this->toEntity($model))
             ->toArray();
@@ -117,7 +111,7 @@ class CourseRepositoryImpl implements CourseRepositoryInterface
         string $orderBy = 'created_at',
         string $orderDir = 'desc'
     ): array {
-        $query = CourseModel::query();
+         $query = CourseModel::with('modules');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -175,23 +169,34 @@ class CourseRepositoryImpl implements CourseRepositoryInterface
    
     private function toEntity(CourseModel $model): Course
     {
-        return new Course(
+        
+        $modules = $model->modules
+            ->sortBy('order')
+            ->map(fn($m) => new \App\Domain\Entities\Module(
+                id: $m->id,
+                courseId: $m->course_id,
+                title: $m->title,
+                order: $m->order
+            ))
+            ->toArray();
+
+        return new \App\Domain\Entities\Course(
             id: $model->id,
             instructorId: $model->instructor_id,
             title: $model->title,
             description: $model->description,
             slug: $model->slug,
-            level: $model->level instanceof CourseLevel
+            level: $model->level instanceof \App\Enums\CourseLevel
                 ? $model->level
-                : CourseLevel::from($model->level),
-
+                : \App\Enums\CourseLevel::from($model->level),
             duration: $model->duration,
             price: $model->price,
-
-            status: $model->status instanceof CourseStatus
+            status: $model->status instanceof \App\Enums\CourseStatus
                 ? $model->status
-                : CourseStatus::from($model->status),
+                : \App\Enums\CourseStatus::from($model->status),
+            modules: $modules
         );
     }
+
 
 }

@@ -6,6 +6,7 @@ use App\Enums\CourseLevel;
 use App\Enums\CourseStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
@@ -29,5 +30,10 @@ class Course extends Model
     public function instructor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'instructor_id');
+    }
+
+    public function modules(): HasMany
+    {
+        return $this->hasMany(Module::class)->orderBy('order');
     }
 }

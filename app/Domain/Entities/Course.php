@@ -7,6 +7,9 @@ use App\Enums\CourseStatus;
 
 class Course
 {
+    
+
+
     public function __construct(
         public ?int $id,
         public int $instructorId,
@@ -14,8 +17,11 @@ class Course
         public ?string $description,
         public string $slug,
         public CourseLevel $level,
-        public int $duration, // in minutes
+        public int $duration,
         public float $price,
-        public CourseStatus $status
-    ) {}
+        public CourseStatus $status,
+        public array $modules = []
+    ) {
+       
+    }
 }
