@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ModuleController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,15 @@ Route::middleware('auth:sanctum')->prefix('courses')->group(function () {
         Route::post('/', [LessonController::class, 'store']);
         Route::put('/{id}', [LessonController::class, 'update']);
         Route::delete('/{id}', [LessonController::class, 'destroy']);
+    });
+
+    Route::prefix('enrollments')->group(function () {
+        Route::get('user/{userId}', [EnrollmentController::class, 'indexByUser']);
+        Route::get('course/{courseId}', [EnrollmentController::class, 'indexByCourse']);
+        Route::get('{id}', [EnrollmentController::class, 'show']);
+        Route::post('/', [EnrollmentController::class, 'store']);
+        Route::patch('{id}/status', [EnrollmentController::class, 'updateStatus']);
+        Route::delete('{id}', [EnrollmentController::class, 'destroy']);
     });
 
 });
