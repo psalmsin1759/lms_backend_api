@@ -7,10 +7,12 @@ use App\Application\UseCases\Course\Lesson\DeleteLesson;
 use App\Application\UseCases\Course\Lesson\GetLessonById;
 use App\Application\UseCases\Course\Lesson\GetLessonsByModule;
 use App\Application\UseCases\Course\Lesson\UpdateLesson;
+use App\Application\UseCases\LessonProgress\MarkLessonAsCompleted;
 use App\Domain\Entities\Lesson;
 use App\Domain\Repositories\LessonRepositoryInterface;
 use App\Infrastructure\Files\UploadFileProcessor;
 use App\Exceptions\ApiException;
+use League\CommonMark\Extension\Highlight\Mark;
 
 class LessonService
 {
@@ -22,6 +24,7 @@ class LessonService
         private GetLessonsByModule $getByModule,
         private LessonRepositoryInterface $lessonRepo,
         private UploadFileProcessor $uploader,
+        private MarkLessonAsCompleted $markCompleted,
     ) {}
 
     public function create(array $data): Lesson
@@ -75,5 +78,10 @@ class LessonService
     public function getByModule(int $moduleId): array
     {
         return $this->getByModule->execute($moduleId);
+    }
+
+    public function markLessonCompleted(int $enrollmentId, int $lessonId)
+    {
+        return $this->markCompleted->execute($enrollmentId, $lessonId);
     }
 }

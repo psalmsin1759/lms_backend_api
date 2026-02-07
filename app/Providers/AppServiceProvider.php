@@ -31,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Domain\Repositories\EnrollmentRepositoryInterface::class,
             \App\Infrastructure\Persistence\EnrollmentRepositoryImpl::class
         );
+        $this->app->bind(
+            \App\Domain\Repositories\LessonProgressRepository::class,
+            \App\Infrastructure\Persistence\LessonProgressRepositoryImpl::class
+        );
     }
 
     /**

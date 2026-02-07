@@ -9,6 +9,7 @@ use App\Http\Requests\Course\Lesson\UpdateLessonRequest;
 use App\Infrastructure\Files\UploadFileProcessor;
 use App\Utils\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
@@ -81,6 +82,23 @@ class LessonController extends Controller
         return ApiResponse::success(
             null,
             'Lesson deleted successfully'
+        );
+    }
+
+    public function markCompleted(Request $request)
+    {
+        $validated = $request->validate([
+            'enrollment_id' => 'required|integer',
+            'lesson_id' => 'required|integer',
+        ]);
+
+        $enrollmentId = $validated['enrollment_id'];
+        $lessonId = $validated['lesson_id'];
+
+        $progress = $this->service->markLessonCompleted($enrollmentId, $lessonId);
+        return ApiResponse::success(
+            $progress,
+            'Lesson marked as completed'
         );
     }
 }

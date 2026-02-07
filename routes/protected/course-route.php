@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->prefix('courses')->group(function () {
         Route::post('/', [LessonController::class, 'store']);
         Route::put('/{id}', [LessonController::class, 'update']);
         Route::delete('/{id}', [LessonController::class, 'destroy']);
+        Route::post('/mark-completed', [LessonController::class, 'markCompleted']);
     });
 
     Route::prefix('enrollments')->group(function () {
