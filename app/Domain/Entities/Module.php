@@ -8,6 +8,7 @@ class Module
         public ?int $id,
         public int $courseId,
         public string $title,
-        public int $order
+        public int $order,
+        public array $lessons = []
     ) {}
 }

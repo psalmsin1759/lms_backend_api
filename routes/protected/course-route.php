@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ModuleController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,15 @@ Route::middleware('auth:sanctum')->prefix('courses')->group(function () {
         Route::post('/', [ModuleController::class, 'store']);         
         Route::put('/{id}', [ModuleController::class, 'update']);      
         Route::delete('/{id}', [ModuleController::class, 'destroy']); 
+    });
+
+
+    Route::prefix('lessons')->group(function () {
+        Route::get('/module/{moduleId}', [LessonController::class, 'index']);
+        Route::get('/{id}', [LessonController::class, 'show']);
+        Route::post('/', [LessonController::class, 'store']);
+        Route::put('/{id}', [LessonController::class, 'update']);
+        Route::delete('/{id}', [LessonController::class, 'destroy']);
     });
 
 });

@@ -23,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Domain\Repositories\ModuleRepositoryInterface::class,
             \App\Infrastructure\Persistence\ModuleRepositoryImpl::class
         );
+        $this->app->bind(
+            \App\Domain\Repositories\LessonRepositoryInterface::class,
+            \App\Infrastructure\Persistence\LessonRepositoryImpl::class
+        );
     }
 
     /**

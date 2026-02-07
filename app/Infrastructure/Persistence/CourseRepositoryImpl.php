@@ -57,26 +57,26 @@ class CourseRepositoryImpl implements CourseRepositoryInterface
 
     public function findById(int $id): ?Course
     {
-        $model = CourseModel::with('modules')->find($id);
+        $model = CourseModel::with('modules.lessons')->find($id);
         return $model ? $this->toEntity($model) : null;
     }
 
     public function findBySlug(string $slug): ?Course
     {
-        $model = CourseModel::with('modules')->where('slug', $slug)->first();
+        $model = CourseModel::with('modules.lessons')->where('slug', $slug)->first();
         return $model ? $this->toEntity($model) : null;
     }
 
     public function all(): array
     {
-        return CourseModel::with('modules')->get()
+        return CourseModel::with('modules.lessons')->get()
             ->map(fn ($model) => $this->toEntity($model))
             ->toArray();
     }
 
     public function getByInstructor(int $instructorId): array
     {
-        return CourseModel::with('modules')
+        return CourseModel::with('modules.lessons')
             ->where('instructor_id', $instructorId)
             ->get()
             ->map(fn ($model) => $this->toEntity($model))
@@ -111,7 +111,7 @@ class CourseRepositoryImpl implements CourseRepositoryInterface
         string $orderBy = 'created_at',
         string $orderDir = 'desc'
     ): array {
-         $query = CourseModel::with('modules');
+         $query = CourseModel::with('modules.lessons');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -167,17 +167,32 @@ class CourseRepositoryImpl implements CourseRepositoryInterface
 
 
    
-    private function toEntity(CourseModel $model): Course
+   private function toEntity(CourseModel $model): Course
     {
-        
         $modules = $model->modules
             ->sortBy('order')
-            ->map(fn($m) => new \App\Domain\Entities\Module(
+            ->map(fn ($m) => new \App\Domain\Entities\Module(
                 id: $m->id,
                 courseId: $m->course_id,
                 title: $m->title,
-                order: $m->order
+                order: $m->order,
+                lessons: $m->lessons
+                    ->sortBy('order')
+                    ->map(fn ($l) => new \App\Domain\Entities\Lesson(
+                        id: $l->id,
+                        moduleId: $l->module_id,
+                        title: $l->title,
+                        contentType: $l->content_type instanceof \App\Enums\ContentType
+                            ? $l->content_type
+                            : \App\Enums\ContentType::from($l->content_type),
+                        contentUrl: $l->content_url,
+                        duration: $l->duration,
+                        order: $l->order
+                    ))
+                    ->values()
+                    ->toArray()
             ))
+            ->values()
             ->toArray();
 
         return new \App\Domain\Entities\Course(
