@@ -47,6 +47,15 @@ class AppServiceProvider extends ServiceProvider
             \App\Domain\Repositories\QuizAttemptRepository::class,
             \App\Infrastructure\Persistence\QuizAttemptRepositoryImpl::class
         );
+        $this->app->bind(
+            \App\Domain\Repositories\CertificateRepositoryInterface::class,
+            \App\Infrastructure\Persistence\CertificateRepositoryImpl::class
+        );
+
+        $this->app->bind(
+            \App\Domain\Repositories\NotificationRepositoryInterface::class,
+            \App\Infrastructure\Persistence\NotificationRepositoryImpl::class
+        );
     }
 
     /**

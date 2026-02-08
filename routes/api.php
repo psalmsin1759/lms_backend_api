@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,10 +18,19 @@ Route::prefix("v1")->group(function () {
         Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
     });
 
+    Route::prefix('notifications')->group(function () {
+        Route::get('/{id}', [NotificationController::class, 'index']);
+        Route::post('/', [NotificationController::class, 'store']);
+        Route::post('/bulk', [NotificationController::class, 'bulk']);
+        Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::patch('/read-all', [NotificationController::class, 'markAllAsRead']);
+    });
+
     
     require __DIR__.'/protected/category-route.php';
     require __DIR__.'/protected/course-route.php';
     require __DIR__.'/protected/quiz-route.php';
+    require __DIR__.'/protected/certificate-route.php';
 });
 
 Route::fallback(function () {
