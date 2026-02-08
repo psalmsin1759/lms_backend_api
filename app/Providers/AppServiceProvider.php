@@ -35,6 +35,18 @@ class AppServiceProvider extends ServiceProvider
             \App\Domain\Repositories\LessonProgressRepository::class,
             \App\Infrastructure\Persistence\LessonProgressRepositoryImpl::class
         );
+        $this->app->bind(
+            \App\Domain\Repositories\QuestionRepository::class,
+            \App\Infrastructure\Persistence\QuestionRepositoryImpl::class
+        );
+        $this->app->bind(
+            \App\Domain\Repositories\QuizRepository::class,
+            \App\Infrastructure\Persistence\QuizRepositoryImpl::class
+        );
+        $this->app->bind(
+            \App\Domain\Repositories\QuizAttemptRepository::class,
+            \App\Infrastructure\Persistence\QuizAttemptRepositoryImpl::class
+        );
     }
 
     /**

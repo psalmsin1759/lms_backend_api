@@ -20,6 +20,7 @@ Route::prefix("v1")->group(function () {
     
     require __DIR__.'/protected/category-route.php';
     require __DIR__.'/protected/course-route.php';
+    require __DIR__.'/protected/quiz-route.php';
 });
 
 Route::fallback(function () {
